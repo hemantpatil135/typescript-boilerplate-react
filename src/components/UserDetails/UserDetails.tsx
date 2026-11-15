@@ -1,40 +1,32 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
 import {
+  Alert,
   Button,
+  CircularProgress,
+  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
 } from "@mui/material";
-import { deleteUser, setIsEdit, setUsers, updateUser } from "../../slices/userSlice";
-import { RootState } from "../../reducers/reducers";
-import { fetchUsers } from "../../apis/userApi";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { fetchUsers, removeUser, setIsEdit } from "../../slices/userSlice";
 
 const UserList: React.FC = () => {
-  const userData = useSelector((state: RootState) => state.userDetails.users);
-  const dispatch = useDispatch();
+  const { users, status, error } = useAppSelector((state) => state.userDetails);
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchData = async () => {
-      const userData = await fetchUsers();
-      dispatch(setUsers(userData));
-    };
-
-    fetchData();
-  }, []);
+    dispatch(fetchUsers());
+  }, [dispatch]);
 
   const handleAddUser = () => {
+    dispatch(setIsEdit(false));
     navigate("/user/add");
-  };
-
-  const handleDelete = (userId: number) => {
-    dispatch(deleteUser(userId));
   };
 
   const handleEdit = (userId: number) => {
@@ -44,9 +36,11 @@ const UserList: React.FC = () => {
 
   return (
     <TableContainer component={Paper}>
-      <Button onClick={handleAddUser} variant='outlined' color='success'>
+      <Button onClick={handleAddUser} variant="outlined" color="success">
         Add User
       </Button>
+      {status === "loading" && <CircularProgress size={24} sx={{ m: 2 }} />}
+      {error && <Alert severity="error">{error}</Alert>}
       <Table>
         <TableHead>
           <TableRow>
@@ -57,16 +51,16 @@ const UserList: React.FC = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {userData.map(({ id, name, email }: any) => (
+          {users.map(({ id, name, email }) => (
             <TableRow key={id}>
               <TableCell>{id}</TableCell>
               <TableCell>{name}</TableCell>
               <TableCell>{email}</TableCell>
               <TableCell>
-                <Button onClick={() => handleEdit(id)} variant='outlined' color='error'>
+                <Button onClick={() => handleEdit(id)} variant="outlined">
                   Edit
                 </Button>
-                <Button onClick={() => handleDelete(id)} variant='outlined' color='error'>
+                <Button onClick={() => dispatch(removeUser(id))} variant="outlined" color="error">
                   Delete
                 </Button>
               </TableCell>

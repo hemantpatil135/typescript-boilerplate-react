@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Container, TextField, Typography } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
 import { loginFailure, loginSuccess, logout } from "../../slices/authSlice";
-import { RootState } from "../../reducers/reducers";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { userLogin } from "../../apis/authAPI";
 
 const Login: React.FC = () => {
@@ -12,8 +11,8 @@ const Login: React.FC = () => {
     password: "",
   });
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { isAuthenticated, error } = useSelector((state: RootState) => state.authUser);
+  const dispatch = useAppDispatch();
+  const { isAuthenticated, error } = useAppSelector((state) => state.authUser);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
