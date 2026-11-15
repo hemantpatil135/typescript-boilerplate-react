@@ -1,22 +1,9 @@
-import { ThunkDispatch } from "redux-thunk";
-import { RootState } from "../reducers/reducers";
-import { loginFailure, loginSuccess } from "../slices/authSlice";
-import { AnyAction } from "@reduxjs/toolkit";
-import { AppThunk } from "../store/store";
+// Simulated login call: resolves after 1s. Replace with a real request
+// when wiring up a backend.
+const DEMO_EMAIL = "admin@gmail.com";
+const DEMO_PASSWORD = "admin@123";
 
-// type AppThunkDispatch = ThunkDispatch<RootState, undefined, AnyAction>;
-
-// Async action for simulating login API call
-export const userLogin = async (email: string, password: string): Promise<boolean> => {
-  return new Promise<boolean>((resolve) => {
-    setTimeout(() => {
-      if (email === "admin@gmail.com" && password === "admin@123") {
-        // Simulate a successful login
-        resolve(true);
-      } else {
-        // Simulate a failed login
-        resolve(false);
-      }
-    }, 1000);
+export const userLogin = (email: string, password: string): Promise<boolean> =>
+  new Promise((resolve) => {
+    setTimeout(() => resolve(email === DEMO_EMAIL && password === DEMO_PASSWORD), 1000);
   });
-};

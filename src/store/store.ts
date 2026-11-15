@@ -1,24 +1,13 @@
-import { createStore, applyMiddleware, Store, Middleware, AnyAction } from "redux";
-import thunk, { ThunkAction, ThunkMiddleware } from "redux-thunk";
-import rootReducer, { RootState } from "../reducers/reducers";
+import { configureStore } from "@reduxjs/toolkit";
+import rootReducer from "../reducers/reducers";
 
-// Define the type for your Redux store state
-export type AppState = RootState;
+// configureStore wires up redux-thunk and the dev-time checks
+// (immutability, serializability, Redux DevTools) automatically.
+export const store = configureStore({
+  reducer: rootReducer,
+});
 
-// Create a type for the store with state and dispatch
-export type AppStore = Store<AppState, AnyAction>;
-
-// Create a type for the middleware
-const middlewares: Middleware[] = [thunk as ThunkMiddleware<AppState, AnyAction>];
-
-// Create the Redux store with the rootReducer and middleware
-const store: AppStore = createStore(rootReducer, applyMiddleware(...middlewares));
-
-export type AppThunk<ReturnType = void> = ThunkAction<
-  ReturnType,
-  RootState,
-  unknown,
-  AnyAction
->;
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
 
 export default store;
