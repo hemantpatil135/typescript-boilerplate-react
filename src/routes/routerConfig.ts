@@ -1,6 +1,8 @@
+import type { ComponentType } from "react";
+
 export type RouteConfig = {
   path: string;
-  exact?: boolean;
-  component: React.ComponentType<any>;
-  // Add more properties as needed
+  component: ComponentType;
+  /** Wrap the route in RequireAuth. */
+  protected?: boolean;
 };

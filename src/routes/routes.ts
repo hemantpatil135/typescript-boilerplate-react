@@ -4,27 +4,10 @@ import UserDetails from "../components/UserDetails/UserDetails";
 import UserForm from "../components/UserDetails/UserForm";
 
 const routes: RouteConfig[] = [
-  {
-    path: "/",
-    exact: true,
-    component: Login,
-  },
-  {
-    path: "/users",
-    exact: true,
-    component: UserDetails,
-  },
-  {
-    path: "/user/add",
-    exact: true,
-    component: UserForm,
-  },
-  {
-    path: "/user/edit/:userId",
-    exact: true,
-    component: UserForm,
-  },
-  // Add more routes as needed
+  { path: "/", component: Login },
+  { path: "/users", component: UserDetails, protected: true },
+  { path: "/user/add", component: UserForm, protected: true },
+  { path: "/user/edit/:userId", component: UserForm, protected: true },
 ];
 
 export default routes;
