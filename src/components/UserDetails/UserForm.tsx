@@ -1,50 +1,30 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { Button, TextField, Box } from "@mui/material";
-import { addUser, updateUser } from "../../slices/userSlice";
-import { RootState } from "../../reducers/reducers";
+import { Box, Button, TextField } from "@mui/material";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { createUser, updateUser } from "../../slices/userSlice";
 
 const UserForm: React.FC = () => {
   const { userId } = useParams();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { isEdit, users } = useSelector((state: RootState) => state.userDetails);
+  const { isEdit, users } = useAppSelector((state) => state.userDetails);
 
   useEffect(() => {
-    if (isEdit && userId) {
-      const singleUser = users.find((user: { id: number; }) => user.id === Number(userId));
-      if (singleUser) {
-        setName(singleUser.name);
-        setEmail(singleUser.email);
-      }
-    } else {
-      // Clear fields when adding a new user
-      setName("");
-      setEmail("");
-    }
-  }, [userId, isEdit]);
+    const existing = isEdit && userId ? users.find((u) => u.id === Number(userId)) : undefined;
+    setName(existing?.name ?? "");
+    setEmail(existing?.email ?? "");
+  }, [userId, isEdit, users]);
 
-  const handleSubmit = () => {
-    if (isEdit && userId) {
-      // Update user
-      const updatedUser = {
-        id: Number(userId),
-        name,
-        email,
-      };
-      dispatch(updateUser(updatedUser)); // Assuming you have an 'updateUser' action
-    } else {
-      // Add new user
-      const newUser = {
-        id: Date.now(),
-        name,
-        email,
-      };
-      dispatch(addUser(newUser));
-    }
+  const handleSubmit = async () => {
+    const action =
+      isEdit && userId
+        ? updateUser({ id: Number(userId), name, email })
+        : createUser({ name, email });
+    // unwrap() throws on a rejected request, so we only navigate on success.
+    await dispatch(action).unwrap();
     navigate("/users");
   };
 
